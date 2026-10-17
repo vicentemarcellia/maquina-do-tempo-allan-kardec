@@ -136,6 +136,22 @@
     
   </main>
 
+<section id="introCard" class="card" style="text-align:center; padding:24px;">
+  <h2>🚀 Vamos viajar no tempo?</h2>
+  <p>Prepare-se para uma aventura para conhecer a história de Allan Kardec!</p>
+
+  <img
+    src="https://i.pinimg.com/736x/e5/b1/90/e5b1904a3974cc83867fb8f3962035a9.jpg"
+    alt="Máquina do tempo"
+    style="display:block; width:100%; max-height:420px; object-fit:contain; margin:20px auto; border-radius:16px;"
+  >
+
+  <p>Você está pronto para descobrir o passado?</p>
+  <button class="primary" id="startButton" type="button">
+    Iniciar viagem ✨
+  </button>
+</section>
+
   <script>
     const stops = [
       {
@@ -182,6 +198,14 @@
 
     let current = 0;
     const completed = new Set();
+    document.getElementById("journeyCard").style.display = "none";
+document.querySelector(".progress-wrap").style.display = "none";
+
+document.getElementById("startButton").addEventListener("click", () => {
+  document.getElementById("introCard").style.display = "none";
+  document.querySelector(".progress-wrap").style.display = "block";
+  renderStop();
+});
 
     const $ = (id) => document.getElementById(id);
     const image = $("stopImage");
