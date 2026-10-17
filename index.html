@@ -73,7 +73,6 @@
     .primary { color: white; background: var(--roxo); }
     .secondary { color: var(--roxo-escuro); background: #eee8fb; }
     .success { color: #fff; background: var(--verde); }
-    .footer-note { text-align: center; margin: 18px 4px 0; color: #514b68; line-height: 1.5; }
     .end { display: none; text-align: center; padding: 28px; }
     .end.show { display: block; }
     .end .heart { font-size: 4rem; }
@@ -93,13 +92,27 @@
   </header>
 
   <main>
-    <section class="progress-wrap" aria-label="Progresso da aventura">
+    <section class="progress-wrap" id="progressWrap" aria-label="Progresso da aventura" style="display: none;">
       <div class="progress-label"><span id="progressText">Preparados para viajar?</span><span id="progressCount">0 de 4 paradas</span></div>
       <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
       <div class="dots" id="dots" aria-hidden="true"></div>
     </section>
 
-    <section class="card" id="journeyCard">
+    <section class="card" id="introCard" style="text-align:center; padding:34px 20px; margin-bottom: 22px;">
+      <h2>🚀 Vamos viajar no tempo?</h2>
+      <p>Prepare-se para uma aventura para conhecer a história de Allan Kardec!</p>
+      <img
+        src="https://i.pinimg.com/736x/e5/b1/90/e5b1904a3974cc83867fb8f3962035a9.jpg"
+        alt="Máquina do tempo"
+        style="display:block; width:100%; max-height:420px; object-fit:contain; margin:20px auto; border-radius:16px;"
+      >
+      <p>Você está pronto para descobrir o passado?</p>
+      <button class="primary" id="startButton" type="button">
+        Iniciar viagem ✨
+      </button>
+    </section>
+
+    <section class="card" id="journeyCard" style="display: none;">
       <img id="stopImage" class="hero-image" src="images/parada1-escola.jpg" alt="Sala de aula antiga, com crianças e um professor">
       <div id="imageFallback" class="image-fallback">
         <div class="big" id="fallbackEmoji">🏫</div>
@@ -132,25 +145,7 @@
       <p><strong>O que aprendemos fica ainda mais importante quando colocamos o bem em prática:</strong> ajudar, acolher, respeitar e tratar as pessoas com amor.</p>
       <button class="primary" id="restartButton" type="button">Viajar novamente ↻</button>
     </section>
-
-    
   </main>
-
-<section id="introCard" class="card" style="text-align:center; padding:24px;">
-  <h2>🚀 Vamos viajar no tempo?</h2>
-  <p>Prepare-se para uma aventura para conhecer a história de Allan Kardec!</p>
-
-  <img
-    src="https://i.pinimg.com/736x/e5/b1/90/e5b1904a3974cc83867fb8f3962035a9.jpg"
-    alt="Máquina do tempo"
-    style="display:block; width:100%; max-height:420px; object-fit:contain; margin:20px auto; border-radius:16px;"
-  >
-
-  <p>Você está pronto para descobrir o passado?</p>
-  <button class="primary" id="startButton" type="button">
-    Iniciar viagem ✨
-  </button>
-</section>
 
   <script>
     const stops = [
@@ -198,18 +193,16 @@
 
     let current = 0;
     const completed = new Set();
-    document.getElementById("journeyCard").style.display = "none";
-document.querySelector(".progress-wrap").style.display = "none";
-
-document.getElementById("startButton").addEventListener("click", () => {
-  document.getElementById("introCard").style.display = "none";
-  document.querySelector(".progress-wrap").style.display = "block";
-  renderStop();
-});
 
     const $ = (id) => document.getElementById(id);
     const image = $("stopImage");
     const fallback = $("imageFallback");
+
+    $("startButton").addEventListener("click", () => {
+      $("introCard").style.display = "none";
+      $("progressWrap").style.display = "block";
+      renderStop();
+    });
 
     function renderDots() {
       $("dots").innerHTML = stops.map((_, i) =>
@@ -286,10 +279,10 @@ document.getElementById("startButton").addEventListener("click", () => {
     $("restartButton").addEventListener("click", () => {
       current = 0;
       completed.clear();
-      renderStop();
+      $("endCard").classList.remove("show");
+      $("introCard").style.display = "block";
+      $("progressWrap").style.display = "none";
     });
-
-    renderStop();
   </script>
 </body>
 </html>
