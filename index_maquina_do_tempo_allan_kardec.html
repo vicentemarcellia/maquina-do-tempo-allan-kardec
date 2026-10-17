@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Máquina do Tempo — Allan Kardec</title>
+  <style>
+    :root {
+      --roxo: #5c4b9a;
+      --roxo-escuro: #34275f;
+      --amarelo: #ffd166;
+      --creme: #fff9ed;
+      --verde: #3d8b72;
+      --texto: #29253b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      color: var(--texto);
+      background: linear-gradient(135deg, #f6eaff, #e5f6ff 55%, #fff5d9);
+      min-height: 100vh;
+    }
+    header {
+      padding: 28px 18px 22px;
+      text-align: center;
+      color: white;
+      background: linear-gradient(135deg, var(--roxo-escuro), var(--roxo));
+      border-bottom: 7px solid var(--amarelo);
+    }
+    header .emoji { font-size: 2.4rem; }
+    h1 { margin: 8px 0; font-size: clamp(1.8rem, 5vw, 3rem); }
+    header p { margin: 8px auto 0; max-width: 720px; font-size: 1.08rem; line-height: 1.5; }
+    main { width: min(1000px, 94%); margin: 22px auto 42px; }
+    .progress-wrap {
+      background: white; padding: 14px 18px; border-radius: 18px;
+      box-shadow: 0 5px 16px #34275f18; margin-bottom: 18px;
+    }
+    .progress-label { display: flex; justify-content: space-between; gap: 10px; font-weight: bold; margin-bottom: 8px; }
+    .progress { height: 13px; background: #e9e3f7; border-radius: 99px; overflow: hidden; }
+    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #6dc6a8, #ffd166); transition: width .35s ease; }
+    .card {
+      background: rgba(255,255,255,.96); border-radius: 24px; overflow: hidden;
+      box-shadow: 0 10px 28px #34275f20; border: 3px solid white;
+    }
+    .hero-image { width: 100%; height: clamp(220px, 42vw, 390px); object-fit: cover; display: block; background: #e8e2f3; }
+    .image-fallback {
+      display: none; min-height: 220px; padding: 28px; text-align: center;
+      background: linear-gradient(135deg, #f3e9ff, #fff4ce); align-items: center;
+      justify-content: center; flex-direction: column; gap: 10px;
+    }
+    .image-fallback .big { font-size: 4rem; }
+    .content { padding: clamp(20px, 4vw, 34px); }
+    .eyebrow { color: var(--roxo); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: .84rem; }
+    h2 { margin: 8px 0 12px; color: var(--roxo-escuro); font-size: clamp(1.55rem, 4vw, 2.25rem); }
+    .story { font-size: 1.12rem; line-height: 1.7; }
+    .mission {
+      margin: 20px 0; padding: 18px; background: #fff5d9;
+      border-left: 6px solid var(--amarelo); border-radius: 14px;
+    }
+    .mission h3 { margin: 0 0 8px; color: #795314; }
+    .question { font-size: 1.16rem; font-weight: bold; line-height: 1.5; }
+    .hint { color: #5c5670; font-size: .98rem; line-height: 1.5; }
+    .answer-box { margin-top: 14px; display: none; padding: 14px; border-radius: 12px; background: #e8f7ef; border: 2px solid #a7dec4; line-height: 1.55; }
+    .answer-box.show { display: block; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    button {
+      border: 0; border-radius: 14px; padding: 13px 18px; font-size: 1rem;
+      font-weight: 800; cursor: pointer; transition: transform .12s, filter .12s;
+    }
+    button:hover { filter: brightness(.97); transform: translateY(-1px); }
+    button:focus-visible { outline: 4px solid #222; outline-offset: 3px; }
+    .primary { color: white; background: var(--roxo); }
+    .secondary { color: var(--roxo-escuro); background: #eee8fb; }
+    .success { color: #fff; background: var(--verde); }
+    .footer-note { text-align: center; margin: 18px 4px 0; color: #514b68; line-height: 1.5; }
+    .end { display: none; text-align: center; padding: 28px; }
+    .end.show { display: block; }
+    .end .heart { font-size: 4rem; }
+    .end h2 { margin-top: 8px; }
+    .end p { font-size: 1.12rem; line-height: 1.7; max-width: 700px; margin: 12px auto; }
+    .dots { display: flex; justify-content: center; gap: 8px; margin: 16px 0; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #d8d0eb; }
+    .dot.active { background: var(--roxo); transform: scale(1.2); }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="emoji" aria-hidden="true">🚀 📚 ✨</div>
+    <h1>A Máquina do Tempo</h1>
+    <p>Uma viagem para conhecer Allan Kardec! Vamos passar por quatro paradas, cumprir as missões e aprender juntos.</p>
+  </header>
+
+  <main>
+    <section class="progress-wrap" aria-label="Progresso da aventura">
+      <div class="progress-label"><span id="progressText">Preparados para viajar?</span><span id="progressCount">0 de 4 paradas</span></div>
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+    </section>
+
+    <section class="card" id="journeyCard">
+      <img id="stopImage" class="hero-image" src="images/parada1-escola.jpg" alt="Sala de aula antiga, com crianças e um professor">
+      <div id="imageFallback" class="image-fallback">
+        <div class="big" id="fallbackEmoji">🏫</div>
+        <strong id="fallbackTitle">Parada 1 — A escola do passado</strong>
+        <span>Adicione a imagem correspondente à pasta <b>images</b> do seu repositório GitHub.</span>
+      </div>
+      <div class="content">
+        <div class="eyebrow" id="stopNumber">Primeira parada</div>
+        <h2 id="stopTitle">A escola do passado</h2>
+        <div class="story" id="stopStory"></div>
+        <div class="mission">
+          <h3>🎯 Nossa missão</h3>
+          <div class="question" id="missionQuestion"></div>
+          <p class="hint" id="missionHint"></p>
+          <button class="secondary" id="answerButton" type="button">Mostrar uma ideia de resposta</button>
+          <div class="answer-box" id="answerBox" aria-live="polite"></div>
+        </div>
+        <div class="buttons">
+          <button class="secondary" id="backButton" type="button" disabled>← Voltar</button>
+          <button class="success" id="completeButton" type="button">Missão cumprida! ✓</button>
+          <button class="primary" id="nextButton" type="button">Próxima parada →</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card end" id="endCard">
+      <div class="heart" aria-hidden="true">💖</div>
+      <h2>Viagem concluída!</h2>
+      <p>Hoje conhecemos um pouco da história de Allan Kardec, que estudou e organizou os ensinamentos da Doutrina Espírita.</p>
+      <p><strong>O que aprendemos fica ainda mais importante quando colocamos o bem em prática:</strong> ajudar, acolher, respeitar e tratar as pessoas com amor.</p>
+      <p>Agora, cada criança pode escolher uma boa atitude para praticar durante a semana. 🌟</p>
+      <button class="primary" id="restartButton" type="button">Viajar novamente ↻</button>
+    </section>
+
+    <p class="footer-note">Dica para o evangelizador: leia a história em voz alta, convide as crianças a encenar as missões e aceite diferentes respostas respeitosas.</p>
+  </main>
+
+  <script>
+    const stops = [
+      {
+        number: "Primeira parada",
+        title: "A escola do passado",
+        image: "images/parada1-escola.jpg",
+        alt: "Ilustração de uma sala de aula antiga com um professor",
+        emoji: "🏫",
+        story: "Há muito tempo, na França, viveu um homem chamado Hippolyte Léon Denizard Rivail. Ele estudou bastante e se tornou professor. Mais tarde, ficou conhecido pelo nome Allan Kardec.",
+        question: "O que podemos fazer quando queremos aprender algo novo?",
+        hint: "Convide uma criança para ser professora e as outras para serem alunas. Depois, todos podem dizer uma ideia.",
+        answer: "Podemos observar, estudar, fazer perguntas, ouvir com atenção e conversar para aprender."
+      },
+      {
+        number: "Segunda parada",
+        title: "O grande pesquisador",
+        image: "images/parada2-pesquisador.jpg",
+        alt: "Ilustração de um estudioso do século XIX pesquisando em sua mesa",
+        emoji: "🔎",
+        story: "Allan Kardec gostava de estudar e pesquisar. Ele examinou com cuidado os fenômenos espíritas e organizou os ensinamentos que deram origem à Doutrina Espírita.",
+        question: "Um pesquisador deve acreditar em qualquer coisa sem pensar ou deve estudar e fazer perguntas?",
+        hint: "Mostre um livro e uma lupa. Peça às crianças que imitem alguém observando e pesquisando.",
+        answer: "Ele deve estudar com atenção, observar, fazer perguntas e procurar compreender as coisas."
+      },
+      {
+        number: "Terceira parada",
+        title: "Um livro importante",
+        image: "images/parada3-livro.jpg",
+        alt: "Ilustração de um livro antigo aberto sobre uma mesa",
+        emoji: "📖",
+        story: "Um dos livros mais conhecidos organizados por Allan Kardec é O Livro dos Espíritos, publicado em 1857. Ele reúne perguntas e respostas sobre temas importantes para a Doutrina Espírita.",
+        question: "Qual é o nome desse livro importante?",
+        hint: "Passe um livro de mão em mão. Quando a música parar, a criança que estiver com ele pode responder ou pedir ajuda ao grupo.",
+        answer: "O Livro dos Espíritos. Ele foi publicado em 1857."
+      },
+      {
+        number: "Quarta parada",
+        title: "O futuro começa agora",
+        image: "images/parada4-bondade.jpg",
+        alt: "Ilustração de crianças ajudando e acolhendo umas às outras",
+        emoji: "💛",
+        story: "Aprender é muito importante, mas também precisamos praticar o bem. Podemos demonstrar amor com pequenas atitudes todos os dias, seguindo os ensinamentos de Jesus.",
+        question: "Como podemos demonstrar amor e bondade hoje?",
+        hint: "Faça mímicas de ajudar, acolher, dividir ou consolar. O grupo tenta adivinhar cada atitude.",
+        answer: "Podemos ajudar alguém, dividir, acolher uma criança nova, pedir desculpas, perdoar e consolar quem está triste."
+      }
+    ];
+
+    let current = 0;
+    const completed = new Set();
+
+    const $ = (id) => document.getElementById(id);
+    const image = $("stopImage");
+    const fallback = $("imageFallback");
+
+    function renderDots() {
+      $("dots").innerHTML = stops.map((_, i) =>
+        `<span class="dot ${i === current ? "active" : ""}"></span>`
+      ).join("");
+    }
+
+    function updateProgress() {
+      $("progressCount").textContent = `${completed.size} de 4 paradas`;
+      $("progressBar").style.width = `${completed.size / 4 * 100}%`;
+      $("progressText").textContent = completed.size === 4
+        ? "Todas as missões foram cumpridas!"
+        : "Cada parada traz uma nova descoberta!";
+    }
+
+    function renderStop() {
+      const s = stops[current];
+      $("journeyCard").style.display = "block";
+      $("endCard").classList.remove("show");
+      $("stopNumber").textContent = s.number;
+      $("stopTitle").textContent = s.title;
+      $("stopStory").textContent = s.story;
+      $("missionQuestion").textContent = s.question;
+      $("missionHint").textContent = s.hint;
+      $("answerBox").textContent = s.answer;
+      $("answerBox").classList.remove("show");
+      $("answerButton").textContent = "Mostrar uma ideia de resposta";
+      $("backButton").disabled = current === 0;
+      $("completeButton").textContent = completed.has(current) ? "Missão concluída ✓" : "Missão cumprida! ✓";
+      $("nextButton").textContent = current === stops.length - 1 ? "Concluir viagem →" : "Próxima parada →";
+      $("fallbackEmoji").textContent = s.emoji;
+      $("fallbackTitle").textContent = `Parada ${current + 1} — ${s.title}`;
+      image.alt = s.alt;
+      image.src = s.image;
+      image.style.display = "block";
+      fallback.style.display = "none";
+      image.onerror = () => {
+        image.style.display = "none";
+        fallback.style.display = "flex";
+      };
+      renderDots();
+      updateProgress();
+    }
+
+    $("answerButton").addEventListener("click", () => {
+      $("answerBox").classList.toggle("show");
+      $("answerButton").textContent = $("answerBox").classList.contains("show")
+        ? "Esconder resposta" : "Mostrar uma ideia de resposta";
+    });
+
+    $("completeButton").addEventListener("click", () => {
+      completed.add(current);
+      $("completeButton").textContent = "Missão concluída ✓";
+      updateProgress();
+    });
+
+    $("backButton").addEventListener("click", () => {
+      if (current > 0) { current--; renderStop(); }
+    });
+
+    $("nextButton").addEventListener("click", () => {
+      if (current < stops.length - 1) {
+        current++;
+        renderStop();
+      } else {
+        $("journeyCard").style.display = "none";
+        $("endCard").classList.add("show");
+        $("progressText").textContent = "Viagem concluída!";
+        $("progressCount").textContent = `${completed.size} de 4 paradas`;
+        $("progressBar").style.width = `${completed.size / 4 * 100}%`;
+      }
+    });
+
+    $("restartButton").addEventListener("click", () => {
+      current = 0;
+      completed.clear();
+      renderStop();
+    });
+
+    renderStop();
+  </script>
+</body>
+</html>
